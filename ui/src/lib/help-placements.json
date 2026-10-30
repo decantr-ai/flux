@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Explicit maintained help coverage map. This declares known confusing surfaces; it does not infer every possible confusion or prove runtime accessibility.",
+  "requiredTopics": [
+    "overview-focus",
+    "recommended-next",
+    "ask-codex",
+    "parked-work",
+    "other-ideas",
+    "latest-request",
+    "review-update",
+    "questions",
+    "request-delivery",
+    "change-requests",
+    "source-selection",
+    "preview-send",
+    "saved-review-context",
+    "affected-items",
+    "review-accept",
+    "context-coverage",
+    "work-map",
+    "plan-checkpoints",
+    "timeline",
+    "plan-comparison",
+    "decisions",
+    "filters",
+    "capture-status",
+    "message-reader",
+    "incoming-questions",
+    "answer-send"
+  ],
+  "placements": [
+    {
+      "surface": "overview-focus",
+      "relativeFile": "ui/src/views/Overview.tsx",
+      "topic": "overview-focus",
+      "risk": "Focus and reason may be mistaken for live execution status."
+    },
+    {
+      "surface": "overview-next-step",
+      "relativeFile": "ui/src/views/Overview.tsx",
+      "topic": "recommended-next",
+      "risk": "A recommendation may be mistaken for authorized or automatic action."
+    },
+    {
+      "surface": "overview-progress-question",
+      "relativeFile": "ui/src/views/Overview.tsx",
+      "topic": "ask-codex",
+      "risk": "A fresh read-only question must remain distinct from the recommended action."
+    },
+    {
+      "surface": "overview-parked-work",
+      "relativeFile": "ui/src/views/Overview.tsx",
+      "topic": "parked-work",
+      "risk": "Parked commitments need recorded return conditions rather than implied priority."
+    },
+    {
+      "surface": "latest-request-banner",
+      "relativeFile": "ui/src/components/NewRequestBanner.tsx",
+      "topic": "latest-request",
+      "risk": "A newer request does not establish that saved focus has caught up."
+    },
+    {
+      "surface": "review-update-entry",
+      "relativeFile": "ui/src/components/ReviewUpdateCard.tsx",
+      "topic": "review-update",
+      "risk": "Opening review offers choices and does not accept or send."
+    },
+    {
+      "surface": "question-history",
+      "relativeFile": "ui/src/components/QuestionRequests.tsx",
+      "topic": "questions",
+      "risk": "Unsent drafts and immutable sent questions have different actions."
+    },
+    {
+      "surface": "question-delivery-history",
+      "relativeFile": "ui/src/components/QuestionRequests.tsx",
+      "topic": "request-delivery",
+      "risk": "Queue acceptance and uncertain delivery do not prove work completion."
+    },
+    {
+      "surface": "change-request-history",
+      "relativeFile": "ui/src/components/ReviewRequests.tsx",
+      "topic": "change-requests",
+      "risk": "Change-request history retains explicit scope and earlier immutable attempts."
+    },
+    {
+      "surface": "question-source-picker",
+      "relativeFile": "ui/src/components/QuestionDialog.tsx",
+      "topic": "source-selection",
+      "risk": "Checked optional sources may be omitted or excerpted in bounded context."
+    },
+    {
+      "surface": "question-prepare-actions",
+      "relativeFile": "ui/src/components/QuestionDialog.tsx",
+      "topic": "preview-send",
+      "risk": "Preparing must not be confused with sending a question."
+    },
+    {
+      "surface": "question-preview-actions",
+      "relativeFile": "ui/src/components/QuestionDialog.tsx",
+      "topic": "preview-send",
+      "risk": "The reviewed question stays read-only when explicitly sent."
+    },
+    {
+      "surface": "change-preview-actions",
+      "relativeFile": "ui/src/components/ReviewUpdateDialog.tsx",
+      "topic": "preview-send",
+      "risk": "Sending a reviewed change request authorizes only its explicit scope."
+    },
+    {
+      "surface": "saved-review-context",
+      "relativeFile": "ui/src/components/ReviewUpdateDialog.tsx",
+      "topic": "saved-review-context",
+      "risk": "Saved context and affected change scope must remain distinct."
+    },
+    {
+      "surface": "review-affected-item-picker",
+      "relativeFile": "ui/src/components/ReviewUpdateDialog.tsx",
+      "topic": "affected-items",
+      "risk": "Only explicitly selected affected items are authorized for changes."
+    },
+    {
+      "surface": "review-source-picker",
+      "relativeFile": "ui/src/components/ReviewUpdateDialog.tsx",
+      "topic": "source-selection",
+      "risk": "Optional context selection does not expand affected work scope."
+    },
+    {
+      "surface": "review-accept-action",
+      "relativeFile": "ui/src/components/ReviewUpdateDialog.tsx",
+      "topic": "review-accept",
+      "risk": "Accept records the whole saved group in Flux without dispatching or verifying."
+    },
+    {
+      "surface": "prepared-context-coverage",
+      "relativeFile": "ui/src/components/ContextCoverage.tsx",
+      "topic": "context-coverage",
+      "risk": "Selected context candidates may be shortened or omitted."
+    },
+    {
+      "surface": "plan-active-work-and-layout",
+      "relativeFile": "ui/src/views/Plan.tsx",
+      "topic": "work-map",
+      "risk": "The map shows recorded parent relationships rather than inferred dependencies."
+    },
+    {
+      "surface": "plan-parked-work",
+      "relativeFile": "ui/src/views/Plan.tsx",
+      "topic": "parked-work",
+      "risk": "Parked work needs separate presentation from optional proposals."
+    },
+    {
+      "surface": "plan-saved-checkpoints",
+      "relativeFile": "ui/src/views/Plan.tsx",
+      "topic": "plan-checkpoints",
+      "risk": "Historical checkpoints are inspectable snapshots rather than rollback controls."
+    },
+    {
+      "surface": "timeline-heading",
+      "relativeFile": "ui/src/views/Timeline.tsx",
+      "topic": "timeline",
+      "risk": "Captured records and their provenance do not independently establish completion."
+    },
+    {
+      "surface": "changes-heading",
+      "relativeFile": "ui/src/views/Changes.tsx",
+      "topic": "plan-comparison",
+      "risk": "Saved-list comparison is not a code diff or cancellation record."
+    },
+    {
+      "surface": "decisions-heading",
+      "relativeFile": "ui/src/views/Decisions.tsx",
+      "topic": "decisions",
+      "risk": "Recorded acceptance, implementation and verification remain separate facts."
+    },
+    {
+      "surface": "context-source-selection",
+      "relativeFile": "ui/src/views/Context.tsx",
+      "topic": "source-selection",
+      "risk": "Suggested sources replaces selection and bounded context may omit candidates."
+    },
+    {
+      "surface": "global-detail-filters",
+      "relativeFile": "ui/src/components/FilterPopover.tsx",
+      "topic": "filters",
+      "risk": "Chat and participant filters apply only to Plan and Timeline."
+    },
+    {
+      "surface": "capture-footer",
+      "relativeFile": "ui/src/shell/FluxApp.tsx",
+      "topic": "capture-status",
+      "risk": "Local capture coverage does not verify native message delivery."
+    },
+    {
+      "surface": "message-display-controls",
+      "relativeFile": "ui/src/components/ReadableMessage.tsx",
+      "topic": "message-reader",
+      "risk": "Readable formatting must preserve access to exact source text."
+    },
+    {
+      "surface": "incoming-questions-heading",
+      "relativeFile": "ui/src/components/IncomingQuestions.tsx",
+      "topic": "incoming-questions",
+      "risk": "Incoming recorded questions are distinct from outgoing Ask Codex requests; ordinary prose is not inferred and recorded replies do not automatically settle decisions."
+    },
+    {
+      "surface": "answer-message-review-actions",
+      "relativeFile": "ui/src/components/AnswerSubmissionDialog.tsx",
+      "topic": "answer-send",
+      "risk": "Explicit message submission, queue acceptance and captured replies must remain separate from local draft editing and native question control acknowledgment."
+    },
+    {
+      "surface": "proposal-list-choices",
+      "relativeFile": "ui/src/components/ProposalList.tsx",
+      "topic": "other-ideas",
+      "risk": "Original suggestions, user disposition and source-backed implementation assessments must remain independent; adding planned work never dispatches execution."
+    }
+  ]
+}

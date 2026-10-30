@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flux by Decantr"
+  short_description: "See current work, plans, questions and next steps."
+  default_prompt: "Use $flux to connect this chat and keep its current work and next steps visible."

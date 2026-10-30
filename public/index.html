@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f3efe8">
+  <title>Flux · Work with Codex</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/vendor/flux-icons.min.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#work-view">Skip to work</a>
+  <div id="app" class="workspace">
+    <header class="topbar"><a class="brand" href="/" aria-label="Flux by Decantr home"><img class="flux-mark" src="/images/flux-progress-beacon.png" alt="" aria-hidden="true"><span class="brand-copy"><span class="brand-name">Flux</span><span class="brand-byline">by Decantr</span></span></a><span class="slash" aria-hidden="true">/</span><span id="project-name">Loading your work…</span><div class="top-status"><span id="connection" class="connection" role="status" aria-live="polite">Connecting to Flux</span><button id="scope-toggle" class="quiet-button scope-toggle" type="button" aria-label="Open filters" aria-expanded="false" aria-controls="sidebar"><i data-lucide="list-filter" aria-hidden="true"></i><span>Filters</span></button><button id="refresh" class="quiet-button" type="button" title="Refresh work records" aria-label="Refresh work records"><i data-lucide="refresh-cw" aria-hidden="true"></i><span>Refresh</span></button></div></header>
+    <div class="shell">
+      <nav id="sidebar" class="sidebar" aria-label="Filters for detailed views" hidden></nav>
+      <main class="main">
+        <header class="heading"><p class="eyebrow">Goal</p><h1 id="goal">Reading the current project</h1><p id="goal-detail" class="subtitle">Loading the current direction and recorded history.</p></header>
+        <div id="tabs" class="tabs" role="tablist" aria-label="Work views">
+          <button id="tab-overview" type="button" role="tab" data-tab="Overview" aria-controls="work-view" aria-selected="true"><i class="tab-icon" data-lucide="house" aria-hidden="true"></i><span>Overview</span></button>
+          <button id="tab-plan" type="button" role="tab" data-tab="Plan" aria-controls="work-view" aria-selected="false" tabindex="-1"><i class="tab-icon" data-lucide="list-checks" aria-hidden="true"></i><span>Plan</span></button>
+          <button id="tab-timeline" type="button" role="tab" data-tab="Timeline" aria-controls="work-view" aria-selected="false" tabindex="-1"><i class="tab-icon" data-lucide="clock-3" aria-hidden="true"></i><span>Timeline</span></button>
+          <button id="tab-changes" type="button" role="tab" data-tab="Changes" aria-controls="work-view" aria-selected="false" tabindex="-1"><i class="tab-icon" data-lucide="git-compare-arrows" aria-hidden="true"></i><span>Changes</span></button>
+          <button id="tab-decisions" type="button" role="tab" data-tab="Decisions" aria-controls="work-view" aria-selected="false" tabindex="-1"><i class="tab-icon" data-lucide="messages-square" aria-hidden="true"></i><span>Decisions</span></button>
+          <button id="tab-context" type="button" role="tab" data-tab="Context" aria-controls="work-view" aria-selected="false" tabindex="-1"><i class="tab-icon" data-lucide="files" aria-hidden="true"></i><span>Context</span></button>
+        </div>
+        <section id="work-view" class="panel" role="tabpanel" aria-labelledby="tab-overview" tabindex="-1"><p class="empty">Loading the local record…</p></section>
+      </main>
+      <aside id="inspector" class="inspector" aria-label="Selected work and actions" aria-live="polite" hidden><p class="muted">Select a plan step or activity to see its context.</p></aside>
+    </div>
+    <footer class="footer"><span id="coverage">Capture coverage is loading</span><span id="last-update">Waiting for the first update</span></footer>
+  </div>
+  <dialog id="diagnostic-dialog" class="diagnostic-dialog" aria-labelledby="diagnostic-title"><div class="dialog-header"><div><p class="eyebrow">Ask Codex · this chat</p><h2 id="diagnostic-title">Review the question</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Close question preview"><i data-lucide="x" aria-hidden="true"></i></button></div><p id="diagnostic-description" class="muted"></p><div class="composer-fields" id="composer-fields"><p id="composer-scope" class="small muted"></p><label class="field-label" for="composer-question">Your question</label><textarea id="composer-question" rows="3" maxlength="800"></textarea><details class="composer-evidence"><summary>Included sources <span id="composer-count"></span></summary><p class="small muted">Your latest direction and the project goal are always included.</p><div id="composer-sources"></div></details></div><div id="diagnostic-message" class="callout" role="status" aria-live="polite"></div><section id="diagnostic-answer" hidden><h3>Answer</h3><p id="diagnostic-answer-text" class="request-result"></p></section><details class="exact-prompt"><summary>Exact question and included context</summary><label class="prompt-label" for="diagnostic-prompt">The prompt Codex will receive</label><textarea id="diagnostic-prompt" readonly spellcheck="false"></textarea></details><div class="dialog-actions"><button type="button" class="secondary-button" id="copy-prompt"><i data-lucide="copy" aria-hidden="true"></i><span>Copy prompt</span></button><button type="button" class="primary-button" id="queue-prompt"><i data-lucide="send" aria-hidden="true"></i><span>Send to Codex</span></button></div><p class="dialog-note">Sending adds the question to Codex’s queue. An answer appears when Codex records its result.</p></dialog>
+  <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+</body>
+</html>

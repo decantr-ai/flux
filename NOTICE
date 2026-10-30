@@ -1,0 +1,9 @@
+Flux by Decantr — internal local preview, version 0.1.0.
+
+No public software license has been selected for Flux. All rights reserved.
+
+Bundled Geist and Geist Mono fonts retain their SIL Open Font License notices
+in public/fonts/Geist-OFL.txt and public/fonts/Geist-Mono-OFL.txt.
+Third-party JavaScript dependencies retain their respective package licenses.
+The bundled dashboard is built from React, Base UI, Tailwind CSS, Lucide,
+react-markdown, remark-gfm, clsx, class-variance-authority and tailwind-merge.

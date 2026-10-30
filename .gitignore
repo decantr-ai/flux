@@ -1,0 +1,10 @@
+.flux/
+node_modules/
+public/build/
+.DS_Store
+*.log
+dist/
+.env
+.env.*
+!.env.example
+.agents/

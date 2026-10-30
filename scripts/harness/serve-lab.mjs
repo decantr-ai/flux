@@ -1,0 +1,14 @@
+import { mkdirSync, existsSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { assertLab, seed } from './fixtures.mjs';
+const i=process.argv.indexOf('--workspace');if(i<0||!process.argv[i+1])throw Error('Usage: node scripts/harness/serve-lab.mjs --workspace /private/tmp/flux-lab-N');
+const workspace=assertLab(process.argv[i+1]),baseline=join(workspace,'baseline'),project=join(workspace,'lab-project'),dataDir=join(project,'.flux');
+if(!existsSync(join(baseline,'src/server.mjs')))throw Error('Missing frozen baseline; run harness first.');
+mkdirSync(project,{recursive:true});const {createStore}=await import(pathToFileURL(join(baseline,'src/store.mjs')));const {startServer}=await import(pathToFileURL(join(baseline,'src/server.mjs')));const store=createStore(dataDir);if(!store.snapshot().project.sessionId)seed(store,project);
+const queueState=join(workspace,'queue-state.json'),deliveries=join(workspace,'queue-deliveries.jsonl'),reveals=join(workspace,'finder-spy.jsonl');
+if(!existsSync(queueState))writeFileSync(queueState,JSON.stringify({mode:'accepted'}));
+const queueCommand=async request=>{appendFileSync(deliveries,JSON.stringify(request)+'\n');const state=JSON.parse(readFileSync(queueState));if(state.mode==='delayed')await new Promise(r=>setTimeout(r,1500));if(state.mode==='fail')throw Error('Synthetic queue failure');};
+const app=await startServer({dataDir,store,port:0,publicDir:join(baseline,'public'),queueCommand,contentOptions:{reveal:async target=>{appendFileSync(reveals,JSON.stringify({target})+'\n')}}});
+const meta={workspace,project,dataDir,url:app.address,baseline,queueState,deliveries,reveals,pid:process.pid};writeFileSync(join(workspace,'lab.json'),JSON.stringify(meta,null,2));console.log(JSON.stringify(meta,null,2));
+for(const signal of ['SIGINT','SIGTERM'])process.on(signal,async()=>{await app.close();process.exit(0)});

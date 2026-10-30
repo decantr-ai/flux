@@ -1,0 +1,84 @@
+{
+  "name": "@decantr/flux",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Flux by Decantr: a local companion for current work, plans and reviewed questions",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node bin/flux.mjs",
+    "dev": "vite --config ui/vite.config.ts",
+    "build": "tsc -p ui/tsconfig.json --noEmit && vite --config ui/vite.config.ts build",
+    "build:icons": "node scripts/build-icons.mjs",
+    "audit:help": "node scripts/audit-help.mjs",
+    "test": "node --test test/*.test.mjs",
+    "check": "node --check src/proposals.mjs && node --check src/incoming-questions.mjs && node --check src/answer-submissions.mjs && node --check src/transcript.mjs && node --check src/markdown.mjs && node --check src/content-links.mjs && node --check src/context.mjs && node --check src/store.mjs && node --check src/diagnostics.mjs && node --check src/reviews.mjs && node --check src/review-feedback.mjs && node --check src/overview.mjs && node --check src/server.mjs && tsc -p ui/tsconfig.json --noEmit",
+    "pack:local": "node scripts/pack-package.mjs",
+    "test:package": "node --test test/package*.test.mjs",
+    "demo": "node scripts/demo.mjs"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "esbuild": "0.28.2",
+    "lucide": "1.57.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "@base-ui/react": "1.9.0",
+    "@tailwindcss/vite": "4.3.3",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "1.57.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-markdown": "10.1.0",
+    "tailwind-merge": "3.7.0",
+    "tailwindcss": "4.3.3"
+  },
+  "dependencies": {
+    "mdast-util-to-string": "4.0.0",
+    "remark-gfm": "4.0.1",
+    "remark-parse": "11.0.0",
+    "unified": "11.0.5"
+  },
+  "license": "UNLICENSED",
+  "bin": {
+    "flux": "bin/flux.mjs"
+  },
+  "files": [
+    "bin/flux.mjs",
+    "src/workspaces.mjs",
+    "src/lifecycle.mjs",
+    "src/skill-install.mjs",
+    "src/server.mjs",
+    "src/store.mjs",
+    "src/proposals.mjs",
+    "src/answer-submissions.mjs",
+    "src/incoming-questions.mjs",
+    "src/transcript.mjs",
+    "src/context.mjs",
+    "src/markdown.mjs",
+    "src/content-links.mjs",
+    "src/overview.mjs",
+    "src/reviews.mjs",
+    "src/review-feedback.mjs",
+    "src/diagnostics.mjs",
+    "integrations/codex/",
+    "public/build/",
+    "public/fonts/",
+    "public/images/flux-progress-beacon.png",
+    "docs/images/",
+    "docs/INSTALL.md",
+    "docs/PACKAGE.md",
+    "NOTICE",
+    "THIRD_PARTY_NOTICES.txt"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/decantr-ai/flux.git"
+  },
+  "homepage": "https://decantr.ai/#flux"
+}

@@ -1,0 +1,101 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import net from 'node:net';
+import http from 'node:http';
+import { spawn } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+const cli = fileURLToPath(new URL('../bin/flux.mjs', import.meta.url));
+function run(...args) { return new Promise(resolve => { const p=spawn(process.execPath,[cli,...args]); let out='',err=''; p.stdout.on('data',x=>out+=x);p.stderr.on('data',x=>err+=x);p.on('close',code=>resolve({code,out,err})); }); }
+test('managed chats isolate data and safely control their services', async t => {
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'flux-package-')), a=path.join(root,'a'), b=path.join(root,'b'); fs.mkdirSync(a); fs.mkdirSync(b);
+ const transcript=path.join(root,'rollout.jsonl'); fs.writeFileSync(transcript,JSON.stringify({type:'session_meta',payload:{id:'chat-a'}})+'\n');
+ const opts=['--project',a,'--session','chat-a'], optsB=['--project',b,'--session','chat-a'];
+ t.after(async()=>{await run('stop',...opts);await run('stop',...optsB);fs.rmSync(root,{recursive:true,force:true});});
+ assert.notEqual((await run('connect','--project',a,'--session','wrong','--transcript',transcript)).code,0); assert.equal(fs.existsSync(path.join(a,'.flux')),false);
+ assert.notEqual((await run('snapshot','--project',a)).code,0);
+ assert.equal((await run('connect',...opts,'--transcript',transcript)).code,0); assert.equal((await run('connect',...optsB,'--transcript',transcript)).code,0);
+ const event=path.join(root,'event.json');fs.writeFileSync(event,JSON.stringify({kind:'checkpoint',summary:'only A'}));assert.equal((await run('record',...opts,'--json',event)).code,0);
+ const snap=JSON.parse((await run('snapshot',...optsB,'--full')).out);assert.equal(snap.events.some(e=>e.summary==='only A'),false);
+ fs.writeFileSync(event,JSON.stringify({kind:'project_patch',data:{patch:{sessionId:'other'}}}));assert.notEqual((await run('record',...opts,'--json',event)).code,0);
+ fs.writeFileSync(event,JSON.stringify({kind:'checkpoint',sessionId:'other'}));assert.notEqual((await run('record',...opts,'--json',event)).code,0);
+ const occupied=net.createServer();await new Promise(r=>occupied.listen(0,'127.0.0.1',r)); const port=occupied.address().port;
+ assert.notEqual((await run('start',...opts,'--port',String(port))).code,0); occupied.close();
+ const unrelated=http.createServer((req,res)=>{res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({instanceId:'different',pid:process.pid,projectId:'foreign',sessionId:'chat-a'}));}); await new Promise(r=>unrelated.listen(0,'127.0.0.1',r));
+ const chatDir=path.join(a,'.flux','chats',fs.readdirSync(path.join(a,'.flux','chats'))[0]); fs.writeFileSync(path.join(chatDir,'runtime.json'),JSON.stringify({url:`http://127.0.0.1:${unrelated.address().port}`,token:'fake',pid:process.pid,instanceId:'old'}));
+ assert.equal(JSON.parse((await run('stop',...opts)).out).stopped,false); assert.equal(unrelated.listening,true); await new Promise(r=>unrelated.close(r));
+ const starts=await Promise.all([run('start',...opts),run('start',...opts)]);assert.deepEqual(starts.map(x=>x.code),[0,0]); const one=JSON.parse(starts[0].out), two=JSON.parse(starts[1].out);assert.equal(one.instanceId,two.instanceId);
+ assert.equal((await run('disconnect',...opts)).code,0); assert.notEqual((await run('import',...opts)).code,0);assert.equal((await run('connect',...opts,'--transcript',transcript)).code,0);
+ const restored=JSON.parse((await run('snapshot',...opts,'--full')).out); assert.ok(restored.events.some(e=>e.summary==='only A')); assert.equal((await run('start',...opts)).code,0);assert.equal((await run('stop',...opts)).code,0);
+});
+test('connect serializes concurrent enrollment and rejects symlinked workspace paths', async t => {
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'flux-connect-')), project=path.join(root,'project'), outside=path.join(root,'outside');fs.mkdirSync(project);fs.mkdirSync(outside);
+ t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ const transcript=path.join(root,'transcript');fs.writeFileSync(transcript,JSON.stringify({type:'session_meta',payload:{id:'s'}})+'\n');
+ const opts=['--project',project,'--session','s','--transcript',transcript];
+ fs.symlinkSync(outside,path.join(project,'.flux'));assert.notEqual((await run('connect',...opts)).code,0);assert.deepEqual(fs.readdirSync(outside),[]);fs.unlinkSync(path.join(project,'.flux'));
+ const results=await Promise.all([run('connect',...opts),run('connect',...opts)]);assert.deepEqual(results.map(x=>x.code),[0,0]);
+});
+test('record accepts scoped focus and checkpoint while rejecting nested foreign identities', async t => {
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'flux-focus-')), project=path.join(root,'project');fs.mkdirSync(project);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ const transcript=path.join(root,'transcript'), file=path.join(root,'input.json');fs.writeFileSync(transcript,JSON.stringify({type:'session_meta',payload:{id:'s'}})+'\n');
+ const opts=['--project',project,'--session','s'];assert.equal((await run('connect',...opts,'--transcript',transcript)).code,0);
+ fs.writeFileSync(file,JSON.stringify({kind:'project_patch',data:{patch:{focus:{title:'Working',sessionId:'s'}}}}));assert.equal((await run('record',...opts,'--json',file)).code,0);
+ fs.writeFileSync(file,JSON.stringify({id:'plan',title:'Plan',steps:[]}));assert.equal((await run('checkpoint',...opts,'--json',file)).code,0);
+ fs.writeFileSync(file,JSON.stringify({kind:'project_patch',data:{patch:{items:[{id:'bad',sessionId:'foreign'}]}}}));assert.notEqual((await run('record',...opts,'--json',file)).code,0);
+ const snapshot=JSON.parse((await run('snapshot',...opts,'--full')).out);assert.equal(snapshot.project.focus.title,'Working');assert.equal(snapshot.project.plans[0].title,'Plan');
+});
+test('disabled enrollment stops capture even if saved control credentials are invalid', async t => {
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'flux-disable-')), project=path.join(root,'project');fs.mkdirSync(project);
+ const transcript=path.join(root,'transcript');fs.writeFileSync(transcript,JSON.stringify({type:'session_meta',payload:{id:'s'}})+'\n');const opts=['--project',project,'--session','s'];
+ t.after(async()=>{await run('stop',...opts);fs.rmSync(root,{recursive:true,force:true});});
+ assert.equal((await run('connect',...opts,'--transcript',transcript)).code,0);assert.equal((await run('start',...opts)).code,0);
+ const dir=path.join(project,'.flux','chats',fs.readdirSync(path.join(project,'.flux','chats'))[0]), file=path.join(dir,'runtime.json'), runtime=JSON.parse(fs.readFileSync(file));runtime.token='wrong';fs.writeFileSync(file,JSON.stringify(runtime));
+ assert.equal((await run('disconnect',...opts)).code,0);
+ fs.appendFileSync(transcript,JSON.stringify({type:'response_item',payload:{type:'message',role:'user',content:[{type:'input_text',text:'Must not capture'}]}})+'\n');
+ await new Promise(resolve=>setTimeout(resolve,1400));
+ assert.doesNotMatch(fs.readFileSync(path.join(dir,'events.jsonl'),'utf8'),/Must not capture/);
+});
+test('failed initial transcript import releases the listening port', async t => {
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'flux-start-fail-')), project=path.join(root,'project');fs.mkdirSync(project);
+ const transcript=path.join(root,'transcript');fs.writeFileSync(transcript,JSON.stringify({type:'session_meta',payload:{id:'s'}})+'\n');const opts=['--project',project,'--session','s'];
+ t.after(async()=>{await run('stop',...opts);fs.rmSync(root,{recursive:true,force:true});});
+ assert.equal((await run('connect',...opts,'--transcript',transcript)).code,0);
+ fs.unlinkSync(transcript);fs.mkdirSync(transcript);
+ const reserve=net.createServer();await new Promise(r=>reserve.listen(0,'127.0.0.1',r));const port=reserve.address().port;await new Promise(r=>reserve.close(r));
+ const result=await run('start',...opts,'--port',String(port));assert.notEqual(result.code,0);assert.match(result.err,/Transcript path must refer to one file/);
+ const probe=net.createServer();await new Promise((resolve,reject)=>{probe.once('error',reject);probe.listen(port,'127.0.0.1',resolve);});await new Promise(r=>probe.close(r));
+});
+test('unverified live runtime cannot be duplicated and stable ports survive restart', async t => {
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'flux-lease-')), project=path.join(root,'project');fs.mkdirSync(project);
+ const transcript=path.join(root,'transcript');fs.writeFileSync(transcript,JSON.stringify({type:'session_meta',payload:{id:'s'}})+'\n');const opts=['--project',project,'--session','s'];
+ let original;
+ t.after(async()=>{if(original) { try { await fetch(`${original.url}/api/control`,{method:'POST',headers:{'x-flux-control':original.token}}); } catch {} } await run('stop',...opts);fs.rmSync(root,{recursive:true,force:true});});
+ assert.equal((await run('connect',...opts,'--transcript',transcript)).code,0);const first=JSON.parse((await run('start',...opts)).out);
+ const dir=path.join(project,'.flux','chats',fs.readdirSync(path.join(project,'.flux','chats'))[0]), file=path.join(dir,'runtime.json');original=JSON.parse(fs.readFileSync(file));fs.writeFileSync(file,JSON.stringify({...original,token:'wrong'}));
+ const failed=await run('start',...opts);assert.notEqual(failed.code,0);assert.match(failed.err,/identity could not be verified/);
+ fs.writeFileSync(file,'{broken'); const unknown=JSON.parse((await run('status',...opts)).out);assert.equal(unknown.state,'unverified');
+ const alternate=net.createServer();await new Promise(r=>alternate.listen(0,'127.0.0.1',r));const alternatePort=alternate.address().port;await new Promise(r=>alternate.close(r));
+ assert.notEqual((await run('start',...opts,'--port',String(alternatePort))).code,0);
+ fs.writeFileSync(file,JSON.stringify(original));assert.equal((await run('stop',...opts)).code,0);original=null;
+ const restarted=JSON.parse((await run('start',...opts)).out);assert.equal(restarted.url,first.url);assert.equal(restarted.originChanged,false);
+});
+test('disconnect revokes an old service generation across immediate reconnect', async t => {
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'flux-generation-')), project=path.join(root,'project');fs.mkdirSync(project);
+ const transcript=path.join(root,'transcript');fs.writeFileSync(transcript,JSON.stringify({type:'session_meta',payload:{id:'s'}})+'\n');const opts=['--project',project,'--session','s'];
+ t.after(async()=>{await run('stop',...opts);fs.rmSync(root,{recursive:true,force:true});});
+ assert.equal((await run('connect',...opts,'--transcript',transcript)).code,0);assert.equal((await run('start',...opts)).code,0);
+ const dir=path.join(project,'.flux','chats',fs.readdirSync(path.join(project,'.flux','chats'))[0]), file=path.join(dir,'runtime.json'), runtime=JSON.parse(fs.readFileSync(file));fs.writeFileSync(file,JSON.stringify({...runtime,token:'wrong'}));
+ assert.equal((await run('disconnect',...opts)).code,0);assert.equal((await run('connect',...opts,'--transcript',transcript)).code,0);
+ await new Promise(resolve=>setTimeout(resolve,600));
+ let active=false;try { active=(await fetch(`${runtime.url}/api/control`,{headers:{'x-flux-control':runtime.token},signal:AbortSignal.timeout(500)})).ok; } catch {} assert.equal(active,false);
+ assert.equal((await run('start',...opts)).code,0);
+});
+test('new workspace is git ignored without replacing existing ignore rules', async t => {
+ const {spawnSync}=await import('node:child_process');const root=fs.mkdtempSync(path.join(os.tmpdir(),'flux-ignore-')), project=path.join(root,'project');fs.mkdirSync(project);t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+ assert.equal(spawnSync('git',['init','-q',project]).status,0);const transcript=path.join(root,'transcript');fs.writeFileSync(transcript,JSON.stringify({type:'session_meta',payload:{id:'s'}})+'\n');
+ assert.equal((await run('connect','--project',project,'--session','s','--transcript',transcript)).code,0);
+ const dir=path.join(project,'.flux','chats',fs.readdirSync(path.join(project,'.flux','chats'))[0]);assert.equal(spawnSync('git',['-C',project,'check-ignore',path.join(dir,'project.json')]).status,0);
+});
