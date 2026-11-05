@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="262" viewBox="0 0 1080 262" role="img" aria-labelledby="title desc">
+  <title id="title">Flux setup in three steps</title>
+  <desc id="desc">Get the local preview, connect one specific chat, and open Flux beside the client or terminal.</desc>
+  <rect width="1080" height="262" rx="16" fill="#f3efe8"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <g transform="translate(36 25)">
+      <rect width="312" height="135" rx="9" fill="#e8e1d7"/>
+      <rect x="48" y="23" width="216" height="86" rx="7" fill="#17161b"/>
+      <circle cx="63" cy="36" r="3" fill="#ff92b2"/><circle cx="74" cy="36" r="3" fill="#716771"/><circle cx="85" cy="36" r="3" fill="#716771"/>
+      <text x="65" y="62" fill="#f3efe8" font-size="14">Get Flux</text>
+      <text x="65" y="87" fill="#ff92b2" font-size="13">Local dashboard + project skill</text>
+      <text x="0" y="178" fill="#ad1647" font-size="18" font-weight="700">1</text>
+      <text x="27" y="178" fill="#141315" font-size="22" font-weight="700">Get the preview</text>
+      <text x="27" y="205" fill="#655e5a" font-size="15">Build it on your computer.</text>
+    </g>
+    <g transform="translate(384 25)">
+      <rect width="312" height="135" rx="9" fill="#e8e1d7"/>
+      <rect x="29" y="35" width="99" height="64" rx="7" fill="#f3efe8"/>
+      <text x="78" y="73" text-anchor="middle" fill="#141315" font-size="17" font-weight="700">Your chat</text>
+      <path d="M140 67 H172" stroke="#ee3f72" stroke-width="3"/>
+      <rect x="184" y="35" width="99" height="64" rx="7" fill="#17161b"/>
+      <text x="233" y="74" text-anchor="middle" fill="#f3efe8" font-size="24" font-weight="700">Flux</text>
+      <text x="0" y="178" fill="#ad1647" font-size="18" font-weight="700">2</text>
+      <text x="27" y="178" fill="#141315" font-size="22" font-weight="700">Connect one chat</text>
+      <text x="27" y="205" fill="#655e5a" font-size="15">Choose the exact work to follow.</text>
+    </g>
+    <g transform="translate(732 25)">
+      <rect width="312" height="135" rx="9" fill="#e8e1d7"/>
+      <rect x="36" y="20" width="240" height="94" rx="7" fill="#17161b"/>
+      <path d="M156 21 V113" stroke="#534453"/>
+      <text x="51" y="43" fill="#f3efe8" font-size="13">Your client</text><text x="170" y="43" fill="#f3efe8" font-size="13">Flux</text>
+      <path d="M51 61 H137 M51 74 H128 M51 87 H106" stroke="#9d91a5" stroke-width="4"/>
+      <path d="M170 61 H258 M170 74 H247 M170 87 H225" stroke="#ff92b2" stroke-width="4"/>
+      <text x="0" y="178" fill="#ad1647" font-size="18" font-weight="700">3</text>
+      <text x="27" y="178" fill="#141315" font-size="22" font-weight="700">Open beside your work</text>
+      <text x="27" y="205" fill="#655e5a" font-size="15">Keep the plan in view as you go.</text>
+    </g>
+  </g>
+</svg>

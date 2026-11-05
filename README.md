@@ -1,35 +1,49 @@
-# Flux by Decantr
+<p align="center">
+  <img src="public/images/flux-progress-beacon.png" width="96" height="96" alt="Flux logo" />
+</p>
+<h1 align="center">Flux by Decantr</h1>
+<p align="center"><strong>Follow the work. Keep the plot.</strong></p>
+<p align="center">A local dashboard and project skill beside your Codex chat.</p>
+<p align="center">
+  <a href="https://decantr.ai/flux/"><strong>See the walkthrough</strong></a> ·
+  <a href="docs/INSTALL.md"><strong>Install Flux</strong></a> ·
+  <a href="docs/INSTALL.md#3-open-it-beside-your-work">Open beside your chat</a>
+</p>
 
-See what your coding agent is working on, why, and what comes next. Flux brings plans, questions, decisions and source-linked updates into a local dashboard alongside Codex.
+![Flux Overview showing current work, its reason and the next step](docs/images/overview.jpg)
 
-**v0.1 local preview** · [Decantr](https://decantr.ai/#flux) · [Install and connect](docs/INSTALL.md)
+*The running application, using a fictional example project.*
 
-![Flux overview showing current work, its reason and the planned next step](docs/images/overview.jpg)
+## Know what your agent is doing
 
-All screenshots show the running application with a fictional example project.
+Flux keeps the task, recorded plan, questions and decisions in view while you work in Codex. The local service captures supported public activity from the chat you connect; the project skill tells the agent how to record meaningful plans and checkpoints.
 
-- **Pick up where you left off.** See the recorded focus and next step, with sources available when you need the detail.
-- **Follow the plan as it changes.** Follow the latest checkpoint or pin an earlier version. Keep unfinished work visible.
-- **Answer questions deliberately.** Draft one answer or several, inspect the exact message, then send it to the selected chat.
-- **Ask about progress with context.** Review a bounded, source-selected question instead of reconstructing a long chat yourself.
+| When you need to… | Flux helps you… |
+| --- | --- |
+| Understand what is happening now | See the recorded focus, its reason and the next step. |
+| Return to a long conversation | Inspect the plan, earlier checkpoints and unfinished work. |
+| Answer the agent’s questions | Draft replies and review the exact message before sending. |
+| Ask why work changed | Select source context for a bounded progress question. |
+
+Connecting enables capture. **The agent must also use the project skill to keep its plan current.** Flux does not read hidden reasoning or automatically enforce a plan.
 
 <details>
-<summary>See the plan and checkpoints</summary>
+<summary><strong>See the plan and checkpoints</strong></summary>
 
-![Flux plan view with active work and checkpoint selection](docs/images/plan.jpg)
+![Flux plan and saved checkpoints](docs/images/plan.jpg)
 
 </details>
 
 <details>
-<summary>See the questions and answer workflow</summary>
+<summary><strong>See the questions and answer workflow</strong></summary>
 
-![Flux questions with drafted answers and a review action](docs/images/questions.jpg)
+![Flux question drafts and reviewed answer flow](docs/images/questions.jpg)
 
 </details>
 
-## Try it from source
+## Try it before connecting a chat
 
-Requirements: Node.js 22 or later and npm. Clone the repository, then run:
+**Local preview · macOS tested · Node.js 22+ and npm**
 
 ```sh
 git clone https://github.com/decantr-ai/flux.git
@@ -39,13 +53,20 @@ npm run build
 npm run demo
 ```
 
-Open the URL printed by the demo. It uses disposable synthetic records and blocks chat delivery and native file actions. Press Ctrl+C to stop it. No Codex account or API key is needed for the example.
+Open the local URL printed in the terminal. This example uses disposable fictional records, with chat delivery and native file actions disabled. Stop it with **Ctrl+C**. No Codex account or API key is needed for the example.
 
-Run `npm run pack:local` to build an installable archive and checksum in `dist/`. See [installation](docs/INSTALL.md) to connect your own project and exact chat, and [package notes](docs/PACKAGE.md) for boundaries. `npm start -- help` lists source CLI commands; `npm start -- open --project <directory> --session <id>` opens an already connected chat. There is no npm-registry release yet.
+**Ready for your own work? [Follow the three-step installation guide →](docs/INSTALL.md)**
 
-## What Flux records
+> [!NOTE]
+> Public source is currently **0.1.0**. There is no npm-registry release. The product tour clearly labels proposed capabilities, including Claude support, the visual scope-check workflow and simpler installation.
 
-Flux only reads the exact transcript supplied at connection. It does not automatically install hooks or send messages. Some actions offer explicit, reviewed dispatch through Codex; availability depends on the local Codex environment. Transcript capture provides public messages and limited activity, not hidden reasoning or a complete account of work. Plans and explanations are recorded claims rather than inferred model thoughts.
+## Your work stays local
+
+Flux reads the exact transcript supplied at connection. Its work archive contains captured chat content and project records; keep it private and out of commits. Connecting does not automatically install hooks or send messages. Some UI actions offer explicit, reviewed dispatch through the local Codex client, whose availability must be checked separately.
+
+Flux and Decantr are separate products. Decantr checks UI changes against project evidence. Flux keeps the ongoing work record.
+
+[Installation and troubleshooting](docs/INSTALL.md) · [Package details](docs/PACKAGE.md) · [Explore Flux](https://decantr.ai/flux/)
 
 ## Develop
 

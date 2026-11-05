@@ -1,6 +1,6 @@
 # Package notes
 
-The public source repository is [decantr-ai/flux](https://github.com/decantr-ai/flux); the product feature is [Flux on Decantr](https://decantr.ai/#flux). Flux 0.1.0 is a local preview. Its npm metadata remains `private: true` to prevent accidental registry publication. No npm-registry release or open-source license has been selected.
+The public source repository is [decantr-ai/flux](https://github.com/decantr-ai/flux); the product feature is [Flux on Decantr](https://decantr.ai/flux/). Flux 0.1.0 is a local preview. Its npm metadata remains `private: true` to prevent accidental registry publication. No npm-registry release or open-source license has been selected.
 
 `npm run pack:local` builds the frontend, gathers dependency notices, checks the archive inventory and host-specific paths, and writes a tarball and checksum to `dist/`. The package contains the managed CLI, runtime modules, prebuilt interface, fonts, and generic project-local Codex skill. It excludes development tests, pilot state, and the legacy developer CLI.
 
